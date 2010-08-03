@@ -53,6 +53,23 @@ class PRMapper {
 		return null;
 	}
 
+	public function generate($name, array $values = null) {
+		foreach ($this->_routes as $url => $params) {
+			if ($params['name'] === $name) {
+				return $this->_fill_url_with_values($url, $values);
+			}
+		}
+
+		return null;
+	}
+
+	private function _fill_url_with_values($url, $values) {
+		foreach ($values as $param => $value) {
+			$url = str_replace('{' . $param . '}', urlencode($value), $url);
+		}
+		return $url;
+	}
+
 	private function _parse_params_from_url($url) {
 		preg_match_all('/\{(\w+)\}/', $url, $matches);
 		return $matches[1];
