@@ -32,7 +32,7 @@ class PRMapper {
 			$re_url = preg_replace('/\{\w+\}/', '(\w+)', $_url);
 			$quoted_url = str_replace('/', '\/', $re_url);
 
-			if (preg_match("/$quoted_url/", $url, $matches)) {
+			if (preg_match("/^$quoted_url\$/", $url, $matches)) {
 				if (!empty($params['params'])) {
 					$info = $params['params'];
 				} else {
@@ -40,7 +40,6 @@ class PRMapper {
 				}
 
 				if ($params['variables']) {
-
 					$i = 1;
 					foreach ($params['variables'] as $param) {
 						$info[$param] = $matches[$i];

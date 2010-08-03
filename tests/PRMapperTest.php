@@ -8,7 +8,12 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 	function setUp() {
 		$mapper = new PRMapper();
 		$mapper->connect('root', '/');
-		$mapper->connect('product', '/p/{name}/');
+
+		$params = array(
+			'controller' => 'product'
+		);
+		$mapper->connect('product', '/p/{name}/', $params);
+
 		$mapper->connect('generic', '/{controller}/{action}/');
 
 		$this->_mapper = $mapper;
@@ -19,14 +24,11 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 	}
 
 	function testMatchURLWithoutParams() {
-		$mapper = new PRMapper();
-		$mapper->connect(null, "/{controller}/{action}/");
-
 		$expected = array(
 			'controller' => 'product',
 			'action' => 'buy'
 		);
-		$this->assertEquals($expected, $mapper->match('/product/buy/'));
+		$this->assertEquals($expected, $this->_mapper->match('/product/buy/'));
 	}
 
 	function testMatchURLWithParams() {
@@ -39,10 +41,10 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 
 		$expected = array(
 			'controller' => 'product',
-			'action' => 'buy'
+			'name' => 'buy'
 		);
 
-		$this->assertEquals($expected, $mapper->match('/p/buy/'));
+		$this->assertEquals($expected, $this->_mapper->match('/p/buy/'));
 	}
 }
 ?>
