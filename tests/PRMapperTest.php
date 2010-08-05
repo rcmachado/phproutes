@@ -32,13 +32,6 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 	}
 
 	function testMatchURLWithParams() {
-		$params = array(
-			'controller' => 'product'
-		);
-
-		$mapper = new PRMapper();
-		$mapper->connect(null, '/p/{action}/', $params);
-
 		$expected = array(
 			'controller' => 'product',
 			'name' => 'buy'
