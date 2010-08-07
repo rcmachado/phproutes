@@ -33,8 +33,8 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 
 	function testMatchURLWithParams() {
 		$expected = array(
+			'name' => 'buy',
 			'controller' => 'product',
-			'name' => 'buy'
 		);
 
 		$this->assertEquals($expected, $this->_mapper->match('/p/buy/'));

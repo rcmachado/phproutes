@@ -18,11 +18,14 @@ class PRMapper {
 	 */
 	public function connect($name, $url, array $params = null) {
 		$info = array('name' => $name);
-		if ($params) {
-			$info['params'] = $params;
-		}
 
-		$info['variables'] = $this->_parse_params_from_url($url);
+		$variables = $this->_parse_params_from_url($url);
+
+		if ($params) {
+			$info['params'] = array_merge($variables, $params);
+		} else {
+			$info['params'] = $variables;
+		}
 
 		$this->_routes[$url] = $info;
 	}
@@ -31,17 +34,10 @@ class PRMapper {
 		foreach ($this->_routes as $_url => $params) {
 			$matches = $this->_match($_url, $url);
 			if ($matches !== false) {
-				if (!empty($params['params'])) {
-					$info = $params['params'];
+				if ($params['params']) {
+					$info = array_merge($params['params'], $matches);
 				} else {
 					$info = array();
-				}
-
-				if ($params['variables']) {
-					$as_keys = array_flip($params['variables']);
-
-					$filtered = array_intersect_key($matches, $as_keys);
-					$info = array_merge($info, $filtered);
 				}
 
 				return $info;
@@ -69,7 +65,14 @@ class PRMapper {
 			return false;
 		}
 
-		return $matches;
+		$cleaned_matches = array();
+		foreach ($matches as $key => $param_value) {
+			if (!is_int($key)) {
+				$cleaned_matches[$key] = $param_value;
+			}
+		}
+
+		return $cleaned_matches;
 	}
 
 	private function _fill_url_with_values($url, $values) {
@@ -81,7 +84,13 @@ class PRMapper {
 
 	private function _parse_params_from_url($url) {
 		preg_match_all('/\{(\w+)\}/', $url, $matches);
-		return $matches[1];
+
+		$reversed = array();
+		foreach ($matches[1] as $param_name) {
+			$reversed[$param_name] = null;
+		}
+
+		return $reversed;
 	}
 }
 ?>
