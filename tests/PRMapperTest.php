@@ -40,7 +40,11 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $this->_mapper->match('/p/buy/'));
 	}
 
-	function testGeneratedURLs() {
+	function testURLDoesntMatch() {
+		$this->assertEquals(null, $this->_mapper->match('/none/'));
+	}
+
+	function testGeneratedURL() {
 		$params = array(
 			'name' => 'chair'
 		);

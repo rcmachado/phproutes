@@ -29,10 +29,8 @@ class PRMapper {
 
 	public function match($url) {
 		foreach ($this->_routes as $_url => $params) {
-			$re_url = preg_replace('/\{\w+\}/', '(\w+)', $_url);
-			$quoted_url = str_replace('/', '\/', $re_url);
-
-			if (preg_match("/^$quoted_url\$/", $url, $matches)) {
+			$matches = $this->_match($_url, $url);
+			if ($matches !== false) {
 				if (!empty($params['params'])) {
 					$info = $params['params'];
 				} else {
@@ -40,12 +38,12 @@ class PRMapper {
 				}
 
 				if ($params['variables']) {
-					$i = 1;
-					foreach ($params['variables'] as $param) {
-						$info[$param] = $matches[$i];
-						$i++;
-					}
+					$as_keys = array_flip($params['variables']);
+
+					$filtered = array_intersect_key($matches, $as_keys);
+					$info = array_merge($info, $filtered);
 				}
+
 				return $info;
 			}
 		}
@@ -61,6 +59,17 @@ class PRMapper {
 		}
 
 		return null;
+	}
+
+	private function _match($re_url, $url) {
+		$re_url = preg_replace('/\{(\w+)\}/', '(?P<\\1>\w+)', $re_url);
+		$quoted_url = str_replace('/', '\/', $re_url);
+
+		if (!preg_match("/^$quoted_url\$/", $url, $matches)) {
+			return false;
+		}
+
+		return $matches;
 	}
 
 	private function _fill_url_with_values($url, $values) {
