@@ -14,13 +14,14 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 		);
 		$mapper->connect('product', '/p/{name}/', $params);
 
+		$mapper->connect('static', '/this/is/a/static/url.html');
 		$mapper->connect('generic', '/{controller}/{action}/');
 
 		$this->_mapper = $mapper;
 	}
 
 	function testMatchRootURL() {
-		$this->assertEquals(array(), $this->_mapper->match('/'));
+		$this->assertEquals(true, $this->_mapper->match('/'));
 	}
 
 	function testMatchURLWithoutParams() {
@@ -42,6 +43,11 @@ class PRMapperTest extends PHPUnit_Framework_TestCase {
 
 	function testURLDoesntMatch() {
 		$this->assertEquals(null, $this->_mapper->match('/none/'));
+	}
+
+	function testMatchStaticURL() {
+		$expected = '/this/is/a/static/url.html';
+		$this->assertEquals(true, $this->_mapper->match($expected));
 	}
 
 	function testGeneratedURL() {

@@ -32,6 +32,12 @@ class PRMapper {
 
 	public function match($url) {
 		foreach ($this->_routes as $_url => $params) {
+			if (strpos($_url, '{') === false) {
+				if ($_url === $url) {
+					return true;
+				}
+			}
+
 			$matches = $this->_match($_url, $url);
 			if ($matches !== false) {
 				if ($params['params']) {
